@@ -1,0 +1,91 @@
+#!/bin/bash
+# SteamPhone Hardware Initialization
+# Runs at boot to detect hardware and apply device-specific settings.
+
+set -euo pipefail
+
+CONFIG="/etc/steamphone/steamphone.conf"
+source "$CONFIG" 2>/dev/null || true
+
+log() { echo "[steamphone-init] $*"; }
+
+detect_device() {
+    if [[ -f /sys/firmware/devicetree/base/compatible ]]; then
+        local compat
+        compat=$(tr '\0' '\n' < /sys/firmware/devicetree/base/compatible | head -1)
+        case "$compat" in
+            *exynos990*|*samsung,s20fe*)
+                echo "exynos990"
+                ;;
+            *sm8250*|*qcom,s20fe*)
+                echo "sd865"
+                ;;
+            *)
+                echo "unknown"
+                ;;
+        esac
+    else
+        echo "unknown"
+    fi
+}
+
+setup_gpu() {
+    local device="$1"
+    case "$device" in
+        exynos990)
+            log "Configuring Panfrost GPU (Mali-G77)"
+            cp /etc/steamphone/gpu/panfrost.conf /etc/environment.d/gpu.conf 2>/dev/null || true
+            ;;
+        sd865)
+            log "Configuring Freedreno GPU (Adreno 650)"
+            cp /etc/steamphone/gpu/freedreno.conf /etc/environment.d/gpu.conf 2>/dev/null || true
+            ;;
+    esac
+}
+
+setup_zram() {
+    local size="${STEAMPHONE_ZRAM_SIZE:-4G}"
+    log "Setting up ZRAM swap (${size})"
+    modprobe zram 2>/dev/null || true
+    if [[ -e /dev/zram0 ]]; then
+        echo "$size" > /sys/block/zram0/disksize
+        mkswap /dev/zram0
+        swapon -p 100 /dev/zram0
+    fi
+}
+
+setup_thermal() {
+    local limit="${STEAMPHONE_THERMAL_LIMIT:-80}"
+    log "Setting thermal limit: ${limit}C"
+    for zone in /sys/class/thermal/thermal_zone*/trip_point_*_temp; do
+        echo "$((limit * 1000))" > "$zone" 2>/dev/null || true
+    done
+}
+
+setup_display() {
+    # Set refresh rate
+    local rate="${STEAMPHONE_REFRESH_RATE:-120}"
+    log "Display refresh rate: ${rate}Hz"
+    # This is handled by Gamescope, just log for now
+}
+
+main() {
+    log "=== SteamPhone Initialization ==="
+
+    # Auto-detect device if needed
+    local device="${STEAMPHONE_DEVICE:-auto}"
+    if [[ "$device" == "auto" ]]; then
+        device=$(detect_device)
+        log "Detected device: ${device}"
+        sed -i "s/STEAMPHONE_DEVICE=auto/STEAMPHONE_DEVICE=${device}/" "$CONFIG" 2>/dev/null || true
+    fi
+
+    setup_gpu "$device"
+    setup_zram
+    setup_thermal
+    setup_display
+
+    log "=== Initialization complete ==="
+}
+
+main

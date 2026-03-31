@@ -1,0 +1,101 @@
+name: SteamPhone Build
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  CROSS_COMPILE: aarch64-linux-gnu-
+
+jobs:
+  lint-scripts:
+    name: Lint Shell Scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+      - name: Lint scripts
+        run: |
+          find scripts/ -name '*.sh' -exec shellcheck {} +
+
+  build-kernel:
+    name: Build Kernel (${{ matrix.device }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        device: [exynos990, sd865]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cross-compilation toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc-aarch64-linux-gnu \
+            g++-aarch64-linux-gnu \
+            bison flex libssl-dev libncurses-dev \
+            bc kmod cpio device-tree-compiler
+
+      - name: Build kernel
+        run: |
+          chmod +x scripts/build/build-kernel.sh
+          ./scripts/build/build-kernel.sh --device ${{ matrix.device }} --jobs $(nproc)
+
+      - name: Upload kernel artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-${{ matrix.device }}
+          path: build/kernel/boot/
+          retention-days: 7
+
+  build-box64:
+    name: Build Box64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc-aarch64-linux-gnu g++-aarch64-linux-gnu cmake git
+
+      - name: Build Box64
+        run: |
+          chmod +x scripts/build/build-box64.sh
+          ./scripts/build/build-box64.sh
+
+      - name: Upload Box64 artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: box64
+          path: build/steam/install/
+          retention-days: 7
+
+  validate-configs:
+    name: Validate Configs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate kernel configs
+        run: |
+          for cfg in kernel/configs/*.defconfig; do
+            echo "Checking: $cfg"
+            grep -q "CONFIG_ARM64=y" "$cfg" || (echo "Missing ARM64 in $cfg" && exit 1)
+            grep -q "CONFIG_DRM=y" "$cfg" || (echo "Missing DRM in $cfg" && exit 1)
+          done
+          echo "All configs valid"
+
+      - name: Validate gamepad config
+        run: |
+          python3 -c "
+          import json
+          with open('input/touchscreen-gamepad/steamphone-gamepad.py') as f:
+              content = f.read()
+          # Just verify it's valid Python
+          compile(content, 'steamphone-gamepad.py', 'exec')
+          print('Gamepad script: valid Python')
+          "

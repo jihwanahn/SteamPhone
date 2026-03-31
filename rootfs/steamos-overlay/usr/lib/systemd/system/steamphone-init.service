@@ -1,0 +1,13 @@
+[Unit]
+Description=SteamPhone Hardware Initialization
+DefaultDependencies=no
+After=systemd-udevd.service
+Before=basic.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/steamphone-init
+RemainAfterExit=yes
+
+[Install]
+WantedBy=basic.target
