@@ -1,0 +1,33 @@
+# Desktop/Wayland packages for SteamPhone
+
+# Wayland core
+wayland
+wlroots
+xorg-xwayland
+
+# Mesa graphics drivers
+mesa
+vulkan-radeon
+vulkan-validationlayers
+
+# Input devices
+libinput
+libinput-udev-rules
+
+# Seat management
+seatd
+
+# Audio
+pipewire
+pipewire-pulse
+pipewire-alsa
+wireplumber
+
+# D-Bus and policy
+dbus
+polkit
+polkit-gnome
+
+# System services
+systemd
+systemd-swap

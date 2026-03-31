@@ -1,0 +1,163 @@
+name: SteamPhone Build CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  kernel:
+    runs-on: ubuntu-latest
+    container: archlinux/base:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Sy --noconfirm base-devel git wget xz
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install cross-compiler
+        run: |
+          pacman -S --noconfirm aarch64-linux-gnu-gcc aarch64-linux-gnu-glibc
+
+      - name: Build kernel
+        run: |
+          ./scripts/build/build-kernel.sh --device sd865 --output /tmp/build/kernel
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-artifacts
+          path: /tmp/build/kernel/**
+
+  rootfs:
+    runs-on: ubuntu-latest
+    container: archlinux/base:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Sy --noconfirm base-devel git wget xz bsdtar qemu-aarch64-static
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build rootfs
+        run: |
+          ./scripts/build/build-rootfs.sh --device sd865 --output /tmp/build/rootfs
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rootfs-artifacts
+          path: /tmp/build/rootfs/**
+
+  gamescope:
+    runs-on: ubuntu-latest
+    container: archlinux/base:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Sy --noconfirm base-devel git wget xz cmake meson ninja pkgconf
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install cross-compiler
+        run: |
+          pacman -S --noconfirm aarch64-linux-gnu-gcc aarch64-linux-gnu-glibc
+
+      - name: Build gamescope
+        run: |
+          ./scripts/build/build-gamescope.sh --output /tmp/build/gamescope
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gamescope-artifacts
+          path: /tmp/build/gamescope/**
+
+  box64:
+    runs-on: ubuntu-latest
+    container: archlinux/base:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Sy --noconfirm base-devel git wget xz cmake
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install cross-compiler
+        run: |
+          pacman -S --noconfirm aarch64-linux-gnu-gcc aarch64-linux-gnu-glibc
+
+      - name: Build Box64
+        run: |
+          ./scripts/build/build-box64.sh --output /tmp/build/steam
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: box64-artifacts
+          path: /tmp/build/steam/**
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: ShellCheck
+        run: |
+          # Check all shell scripts
+          find . -name "*.sh" -exec shellcheck {} \;
+
+      - name: Markdownlint
+        run: |
+          # Check markdown files
+          find . -name "*.md" -exec mdl {} \;
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [kernel, rootfs]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download kernel artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: kernel-artifacts
+          path: /tmp/kernel
+
+      - name: Download rootfs artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: rootfs-artifacts
+          path: /tmp/rootfs
+
+      - name: Verify build artifacts
+        run: |
+          # Verify kernel image exists
+          ls -la /tmp/kernel/boot/
+          test -f /tmp/kernel/boot/Image
+
+          # Verify rootfs exists
+          ls -la /tmp/rootfs/root/
+          test -d /tmp/rootfs/root/etc
+
+      - name: Create disk image
+        run: |
+          ./scripts/build/create-image.sh \
+            --kernel /tmp/kernel \
+            --rootfs /tmp/rootfs \
+            --output /tmp/steamphone.img
+
+      - name: Upload image
+        uses: actions/upload-artifact@v4
+        with:
+          name: steamphone-image
+          path: /tmp/steamphone.img**

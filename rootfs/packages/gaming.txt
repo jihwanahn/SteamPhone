@@ -1,0 +1,40 @@
+# Gaming packages for SteamPhone (Arch Linux ARM)
+# Installed on top of base system for Steam gaming support
+
+# Steam Client
+steam
+
+# Gamepad/input support
+xboxdrv
+sc-controller
+sdl2
+sdl2_image
+sdl2_ttf
+sdl2_mixer
+
+# Wine/DXVK for Windows games
+wine
+wine-mono
+dxvk
+
+# Vulkan and graphics
+vulkan-radeon
+vulkan-intel
+lib32-mesa
+lib32-vulkan-radeon
+lib32-vulkan-intel
+lib32-pipewire
+lib32-alsa-lib
+
+# Gaming overlays and tools
+mangohud
+vkbasalt
+gamemode
+lib32-gamemode
+
+# Game controllers
+joycond
+hid-nx-dkms
+
+# Network gaming
+qbittorrent

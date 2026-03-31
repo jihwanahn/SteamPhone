@@ -1,0 +1,21 @@
+# Network packages for SteamPhone
+
+# Network management
+networkmanager
+network-manager-applet
+iwd
+
+# Bluetooth
+bluez
+bluez-utils
+blueman
+
+# SSH
+openssh
+openssh-hpn
+
+# Network tools
+iputils
+iproute2
+net-tools
+dnsutils

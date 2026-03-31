@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "name": "SteamPhone Default Layout",
+  "description": "Touch regions for SteamPhone in portrait mode",
+  
+  "display": {
+    "width": 1080,
+    "height": 2400,
+    "orientation": "portrait",
+    "dpi": 407
+  },
+
+  "touch_regions": [
+    {
+      "id": "L2",
+      "name": "Left Trigger",
+      "x": 0, "y": 0,
+      "w": 270, "h": 600,
+      "type": "trigger",
+      "axis": "lt",
+      "multiplier": 1.0
+    },
+    {
+      "id": "L1",
+      "name": "Left Shoulder",
+      "x": 0, "y": 600,
+      "w": 270, "h": 300,
+      "type": "shoulder",
+      "button": "tl"
+    },
+    {
+      "id": "DPAD_UP",
+      "name": "D-Pad Up",
+      "x": 80, "y": 1200,
+      "w": 110, "h": 110,
+      "type": "button",
+      "button": "up"
+    },
+    {
+      "id": "DPAD_DOWN",
+      "name": "D-Pad Down",
+      "x": 80, "y": 1520,
+      "w": 110, "h": 110,
+      "type": "button",
+      "button": "down"
+    },
+    {
+      "id": "DPAD_LEFT",
+      "name": "D-Pad Left",
+      "x": 0, "y": 1310,
+      "w": 110, "h": 110,
+      "type": "button",
+      "button": "left"
+    },
+    {
+      "id": "DPAD_RIGHT",
+      "name": "D-Pad Right",
+      "x": 160, "y": 1310,
+      "w": 110, "h": 110,
+      "type": "button",
+      "button": "right"
+    },
+    {
+      "id": "R2",
+      "name": "Right Trigger",
+      "x": 810, "y": 0,
+      "w": 270, "h": 600,
+      "type": "trigger",
+      "axis": "rt",
+      "multiplier": 1.0
+    },
+    {
+      "id": "R1",
+      "name": "Right Shoulder",
+      "x": 810, "y": 600,
+      "w": 270, "h": 300,
+      "type": "shoulder",
+      "button": "tr"
+    },
+    {
+      "id": "A",
+      "name": "A Button",
+      "x": 900, "y": 1200,
+      "w": 110, "h": 110,
+      "type": "button",
+      "button": "a"
+    },
+    {
+      "id": "B",
+      "name": "B Button",
+      "x": 1010, "y": 1100,
+      "w": 110, "h": 110,
+      "type": "button",
+      "button": "b"
+    },
+    {
+      "id": "X",
+      "name": "X Button",
+      "x": 790, "y": 1100,
+      "w": 110, "h": 110,
+      "type": "button",
+      "button": "x"
+    },
+    {
+      "id": "Y",
+      "name": "Y Button",
+      "x": 900, "y": 1000,
+      "w": 110, "h": 110,
+      "type": "button",
+      "button": "y"
+    },
+    {
+      "id": "START",
+      "name": "Start",
+      "x": 540, "y": 1350,
+      "w": 80, "h": 80,
+      "type": "button",
+      "button": "start"
+    },
+    {
+      "id": "SELECT",
+      "name": "Select",
+      "x": 440, "y": 1350,
+      "w": 80, "h": 80,
+      "type": "button",
+      "button": "select"
+    }
+  ]
+}

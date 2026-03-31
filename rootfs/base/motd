@@ -1,0 +1,15 @@
+Welcome to SteamPhone!
+=====================
+
+This device is running SteamOS on ARM hardware.
+
+Hardware: Samsung Galaxy S20 FE 5G (SM-G781N)
+SoC: Qualcomm Snapdragon 865
+GPU: Adreno 650
+
+Quick Commands:
+  steamphone-status   - Show system status
+  steamphone-config   - Open configuration
+  steamphone-power    - Power menu
+
+Report issues: https://github.com/jihwanahn/steamphone

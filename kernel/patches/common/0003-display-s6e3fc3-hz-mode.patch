@@ -1,0 +1,30 @@
+From: SteamPhone Project <steamphone@example.com>
+Subject: [PATCH 3/3] drm: panel: s6e3fc3: Add 120Hz refresh rate mode
+Date: Mon, 1 Jan 2024 00:00:00 +0000
+Signed-off-by: SteamPhone Project <steamphone@example.com>
+---
+
+Add 120Hz refresh rate mode support for S6E3FC3 panel.
+
+Note: This is a STUB patch. Panel timing values need actual
+verification from panel datasheet or downstream Samsung kernel.
+
+diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e3fc3.c b/drivers/gpu/drm/panel/panel-samsung-s6e3fc3.c
+--- a/drivers/gpu/drm/panel/panel-samsung-s6e3fc3.c
++++ b/drivers/gpu/drm/panel/panel-samsung-s6e3fc3.c
+@@ -30,6 +30,7 @@ static const struct drm_display_mode s6e3fc3Modes[] = {
+ 		.vtotal = 2532,
+ 		.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
+ 	},
++#if 0 /* STUB - 120Hz mode not yet verified */
+ 	/* 120Hz mode - needs timing verification */
+ 	{
+ 		.clock = 150000,
+@@ -39,6 +40,7 @@ static const struct drm_display_mode s6e3fc3Modes[] = {
+ 		.vsync_start = 2508,
+ 		.vsync_end = 2510,
+ 		.vtotal = 2532,
++		.type = DRM_MODE_TYPE_DRIVER,
+ 	},
++#endif
+ };

@@ -13,6 +13,7 @@ SteamOS(Arch Linux ARM 기반)로 구동되는 휴대용 Steam 게이밍 디바�
 |-------|-----|-----|--------|
 | SM-G780F | Exynos 990 | Mali-G77 MP11 | Primary target |
 | SM-G780G | Snapdragon 865 | Adreno 650 | Secondary target |
+| SM-G781N | Snapdragon 865 5G | Adreno 650 | Korean variant (your device) |
 
 ## Architecture
 
@@ -76,7 +77,7 @@ cd steamphone
 ./scripts/build/setup-host.sh
 
 # 3. Build the kernel
-./scripts/build/build-kernel.sh --device exynos990
+./scripts/build/build-kernel.sh --device sd865
 
 # 4. Build the root filesystem
 ./scripts/build/build-rootfs.sh

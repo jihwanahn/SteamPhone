@@ -1,0 +1,27 @@
+/*
+ * Device Tree Overlay for SteamPhone-specific configurations
+ * Applied on top of base SM8250/S20 FE device tree
+ */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+	fragment@0 {
+		target = <&display_panel>;
+		__overlay__ {
+			/* SteamPhone display overrides */
+			steamphone-hz = <120>;
+			steamphone-rotation = <1>; /* landscape for gaming */
+		};
+	};
+
+	fragment@1 {
+		target = <&gpu>;
+		__overlay__ {
+			/* GPU performance settings for gaming */
+			max-freq = <700000000>; /* 700 MHz stub - actual max is higher */
+			min-freq = <200000000>;
+		};
+	};
+};

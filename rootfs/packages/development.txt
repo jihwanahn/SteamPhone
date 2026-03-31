@@ -1,0 +1,23 @@
+# Development packages for SteamPhone
+
+# Base development
+base-devel
+cmake
+meson
+ninja
+git
+python
+python-pip
+
+# Build tools
+gcc
+gcc-libs
+make
+pkgconf
+
+# Documentation
+man-pages
+man-db
+
+# Source control
+git-lfs

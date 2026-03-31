@@ -1,0 +1,20 @@
+# GPU Performance Environment Variables
+# Location: /etc/steamphone/gpu/environment
+
+# Adreno (Freedreno) specific
+export MESA_LOADER_DRIVER_OVERRIDE=freedrenoo
+export GBM_BACKEND=dri
+export __GLX_VENDOR_LIBRARY_NAME=mesa
+
+# Gaming performance
+export mesa_glthread=true
+export RADV_PERFTEST=gpl
+
+# Disable vsync for lower latency (may cause tearing)
+# export __GL_SYNC_TO_VBLANK=0
+
+# Enable shader precompilation
+export RADV_ENABLE_SHADER_STORE=1
+
+# Memory allocation
+export MESA_GLSL_CACHE_SIZE=128M

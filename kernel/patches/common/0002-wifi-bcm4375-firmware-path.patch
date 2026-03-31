@@ -1,0 +1,29 @@
+From: SteamPhone Project <steamphone@example.com>
+Subject: [PATCH 2/3] arm64: dts: qcom: Add firmware path for BCM4375 WiFi
+Date: Mon, 1 Jan 2024 00:00:00 +0000
+Signed-off-by: SteamPhone Project <steamphone@example.com>
+---
+
+Add firmware path for BCM4375 WiFi chip found in some S20 FE variants.
+
+Note: This is a STUB patch. WiFi chip variant needs verification.
+- SM-G781N (Snapdragon) may use different WiFi than Exynos variants
+
+diff --git a/arch/arm64/boot/dts/qcom/bcm4375-firmware.dtsi b/arch/arm64/boot/dts/qcom/bcm4375-firmware.dtsi
+new file mode 100644
+index 0000000..2345678
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/bcm4375-firmware.dtsi
+@@ -0,0 +1,12 @@
++/*
++ * BCM4375 WiFi firmware configuration
++ * Firmware files needed:
++ *   - brcm/brcmfmac4375-pcie.bin
++ *   - brcm/brcmfmac4375-pcie.clm_blob
++ */
++
++&wifi {
++	firmware-name = "brcm/brcmfmac4375-pcie.bin";
++	clm-blob = "brcm/brcmfmac4375-pcie.clm_blob";
++	status = "okay";
++};
