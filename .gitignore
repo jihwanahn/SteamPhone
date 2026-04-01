@@ -39,4 +39,4 @@ venv/
 # Temporary
 *.tmp
 *.log
-.sisyphus
+/.sisyphus/
