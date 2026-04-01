@@ -104,8 +104,8 @@ EOF
         --cross-file "${OUTPUT_DIR}/aarch64-cross.ini" \
         --prefix=/usr \
         --buildtype=release \
-        -Dpipewire=enabled \
-        -Dforce_fallback_for=stb,wlroots,libliftoff,vkroots,glm,reshade
+        -Dpipewire=disabled \
+        -Dforce_fallback_for=stb,wlroots,libliftoff,vkroots,glm,reshade,libpipewire
 
     # Build
     log_info "Building Gamescope..."

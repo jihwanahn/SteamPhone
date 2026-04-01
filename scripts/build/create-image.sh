@@ -95,7 +95,7 @@ format_and_populate() {
     # Format
     log_info "Formatting partitions..."
     mkfs.vfat -F 32 -n SPBOOT "$boot_part"
-    mkfs.f2fs -f -l SPROOT "$root_part"
+    mkfs.ext4 -L SPROOT "$root_part"
 
     # Mount
     local mnt="/tmp/steamphone-mnt"

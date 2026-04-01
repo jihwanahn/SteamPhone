@@ -118,11 +118,19 @@ apply_patches() {
 configure_kernel() {
     local src_dir="${OUTPUT_DIR}/linux-${KERNEL_VER}"
     local config_src="${PROJECT_ROOT}/kernel/configs/${DEFCONFIG}"
+    local dtb_src="${PROJECT_ROOT}/kernel/dtb"
 
     log_info "Configuring kernel with ${DEFCONFIG}..."
 
     # Copy our defconfig
     cp "$config_src" "${src_dir}/arch/arm64/configs/${DEFCONFIG}"
+
+    # Copy device tree sources if they exist
+    if [[ -d "$dtb_src" ]]; then
+        log_info "Copying device tree sources..."
+        cp -n "$dtb_src"/*.dts "${src_dir}/arch/arm64/boot/dts/qcom/" 2>/dev/null || true
+        cp -n "$dtb_src"/*.dtsi "${src_dir}/arch/arm64/boot/dts/qcom/" 2>/dev/null || true
+    fi
 
     make -C "$src_dir" \
         ARCH=arm64 \
@@ -152,10 +160,26 @@ build_kernel() {
     mkdir -p "${OUTPUT_DIR}/boot"
     cp "${src_dir}/arch/arm64/boot/Image" "${OUTPUT_DIR}/boot/"
 
-    # Copy device tree
+    # Copy device tree - look in multiple places
     local dtb_path
     dtb_path=$(find "${src_dir}/arch/arm64/boot/dts" -name "${DTB_TARGET}*.dtb" 2>/dev/null | head -1)
-    if [[ -n "$dtb_path" ]]; then
+    
+    # If not found in kernel source tree, compile from our source
+    if [[ -z "$dtb_path" ]]; then
+        log_info "Building custom DTB from ${DTB_TARGET}.dts..."
+        local our_dts="${PROJECT_ROOT}/kernel/dtb/${DTB_TARGET}.dts"
+        if [[ -f "$our_dts" ]]; then
+            make -C "$src_dir" \
+                ARCH=arm64 \
+                CROSS_COMPILE="$CROSS_COMPILE" \
+                "${DTB_TARGET}.dtb" 2>/dev/null || \
+            dtc -I dts -O dtb -o "${OUTPUT_DIR}/boot/${DTB_TARGET}.dtb" "$our_dts" 2>/dev/null || \
+                log_warn "DTB compilation failed"
+            dtb_path="${OUTPUT_DIR}/boot/${DTB_TARGET}.dtb"
+        fi
+    fi
+    
+    if [[ -n "$dtb_path" ]] && [[ -f "$dtb_path" ]]; then
         cp "$dtb_path" "${OUTPUT_DIR}/boot/"
         log_info "DTB: $(basename "$dtb_path")"
     else

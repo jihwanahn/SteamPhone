@@ -137,6 +137,29 @@ SteamPhone/
 3. **WiFi/BT firmware missing** - Binary blobs not included (licensing)
 4. **Audio driver stub** - May not work without actual ALSA config
 5. **Touch gamepad incomplete** - uinput implementation is stub
+6. **Samsung partition layout** - super.img handling needs verification
+
+---
+
+## Build System Validation (2026-03-31)
+
+### Scripts Validated
+- `build-kernel.sh` ✅ Syntax OK - kernel 6.6.10 download/patch/config/build
+- `build-rootfs.sh` ✅ Syntax OK - ALARM + SteamOS overlay
+- `build-gamescope.sh` ✅ Syntax OK - meson cross-compilation
+- `build-box64.sh` ✅ Syntax OK - Box64/Box86 + Steam installer
+- `create-image.sh` ✅ Syntax OK - GPT + F2FS + Odin package
+- `flash.sh` ✅ Syntax OK - Heimdall flashing
+
+### Issues Fixed
+- ✅ Removed non-existent `steam` package from gaming.txt (Steam via Box64 bootstrap)
+- ✅ Added missing GPU config files (panfrost.conf, freedreno.conf)
+
+### Remaining Concerns
+- ⚠️ Device tree (sm8250-s20fe.dts) is marked as stub by author
+- ⚠️ Kernel patches are stubs, not tested on actual hardware
+- ⚠️ gamescope/patches/ empty - relies on upstream ARM support
+- ⚠️ Samsung SUPER partition layout may need adjustment
 
 ---
 

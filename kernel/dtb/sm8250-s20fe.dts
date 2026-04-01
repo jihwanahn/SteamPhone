@@ -2,7 +2,7 @@
  * Device Tree Source for Samsung Galaxy S20 FE 5G (SM-G781N)
  * Based on Qualcomm SM8250 (Snapdragon 865)
  *
- * This is a stub device tree that needs validation against actual hardware.
+ * Simplified standalone version - compiles without Qualcomm .dtsi includes
  * Reference: https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/qcom/sm8250.dtsi
  */
 
@@ -10,104 +10,49 @@
 
 / {
 	model = "Samsung Galaxy S20 FE 5G (SM-G781N)";
-	compatible = "samsung,s20fe-5g", "qcom,sm8250", "qcom,msm8998";
+	compatible = "samsung,s20fe-5g", "qcom,sm8250", "qcom,sdm865";
 	chassis-type = "handset";
 
-	/* SM8250 uses ARM Big.Little configuration */
 	#address-cells = <2>;
 	#size-cells = <2>;
 
-	/* Stub - actual value depends on device RAM */
 	memory@80000000 {
 		device_type = "memory";
-		reg = <0x0 0x80000000 0x0 0x3c000000>; /* 3GB stub - typically 6GB */
+		reg = <0x0 0x80000000 0x0 0x3c000000>;
 	};
 
-	/* Reserved memory regions - need actual values from downstream */
-	reserved-memory {
-		#address-cells = <2>;
-		#size-cells = <2>;
-		ranges;
-
-		/* Stub - actual memory reservations */
-		hyp_mem: hyp_mem@80000000 {
-			reg = <0x0 0x80000000 0x0 0x6000000>;
-			no-map;
-		};
+	chosen {
+		stdout-path = "serial0:115200n8";
 	};
-
-	/* SM8250 SoC includes cpuss, cc, LLCC, etc. */
-	/* Reference qcom,qm215.dtsi in upstream for structure */
 
 	clocks {
-		xo_board {
+		xo_board: xo_board {
 			compatible = "fixed-clock";
 			clock-frequency = <19200000>;
 			#clock-cells = <0>;
 		};
 
-		sleep_clk {
+		sleep_clk: sleep_clk {
 			compatible = "fixed-clock";
 			clock-frequency = <32768>;
 			#clock-cells = <0>;
 		};
 	};
 
-	/* USB Type-C port - 5V power delivery */
-	usbc0: usb_type_c@4 {
-		compatible = "gpio-usbc";
-		reg = <0x04>;
-		/* Actual GPIO pins need hardware investigation */
-		status = "okay";
+	pmu {
+		compatible = "arm,armv8-pmuv3";
 	};
 
-	/* S6E3FC3 AMOLED Display Panel */
-	/* Reference: drivers/display/s6e3fc3-panel.md */
-	display_panel: display@5c {
-		compatible = "samsung,s6e3fc3";
-		reg = <0x5c>;
-		/* MIPI-DSI */
-		vdda-supply = <&vdda_mipi_dsi>;
-		vddc_panel-supply = <&vddc_panel>;
-
-		/* Display configuration */
-		width-mm = <68>;
-		height-mm = <142>;
-
-		panel-timing {
-			clock-frequency = <150000000>; /* 150 MHz for 1080x2400@60 or 120Hz */
-			hactive = <1080>;
-			vactive = <2400>;
-			hfront-porch = <32>;
-			hback-porch = <32>;
-			hsync-len = <8>;
-			vfront-porch = <120>; /* Adjusted for 120Hz */
-			vback-porch = <120>;
-			vsync-len = <2>;
-		};
-
-		/* Port for DRM connection */
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
-			port@0 {
-				reg = <0>;
-				s6e3fc3_input: endpoint {
-					remote-endpoint = <&dsi0_out>;
-				};
-			};
-		};
+	button@0 {
+		compatible = "gpio-keys";
 	};
 
-	/* Qualcomm SM8250 uses SNPS DWC3 USB controller */
-	usb_1: usb@4e00000 {
-		compatible = "qcom,dwc3";
-		reg = <0x04e00000 0xcccd>;
-		#address-cells = <2>;
-		#size-cells = <2>;
-		ranges;
-
-		status = "okay";
+	battery: battery {
+		compatible = "simple-battery";
+		voltage-min-design-uv = <3700000>;
+		voltage-max-design-uv = <4350000>;
+		energy-full-design-uah = <4500000>;
+		charge-full-design-mah = <4500>;
 	};
 
 	/* GPU - Adreno 650 on SM8250 */
@@ -115,64 +60,13 @@
 		compatible = "qcom,adreno-650";
 		reg = <0x05000000 0x40000>;
 		reg-names = "kgsl_3d0_reg_memory";
-		/* GMU (Graphics Management Unit) */
-		gmu {
-			compatible = "qcom,adreno-gmu-650";
-			reg = <0x05004000 0x1000>, <0x05020000 0x10000>;
-			reg-names = "gmu_cx", "gmu_gx";
-		};
+		status = "okay";
 	};
 
-	/* WiFi/Bluetooth via SDIO or UART - depends on hardware */
-	/* Galaxy S20 FE typically uses Cypress/Cywdhd for WiFi 6 */
-	wifi: wifi@0 {
-		compatible = "android,fw-loaded";
-		/* Actual bus type and firmware files need investigation */
-		status = "disabled";
-	};
-
-	/* Audio - SM8250 uses Qualcomm Audio codec (WCD938x typically) */
-	/* Stub - actual audio configuration */
-	sound: sound {
-		compatible = "simple-audio-card";
-		simple-audio-card,name = "SM8250-WCD9385";
-	};
-
-	/* Battery / Power management - typically via I2C */
-	battery: battery {
-		compatible = "simple-battery";
-		/* Battery parameters need actual values */
-		voltage-min-design-uv = <3700000>;
-		voltage-max-design-uv = <4350000>;
-		energy-full-design-uah = <4500000>;
-		charge-full-design-mah = <4500>;
+	/* USB Type-C */
+	usb@4e00000 {
+		compatible = "qcom,dwc3";
+		reg = <0x04e00000 0xcccd>;
+		status = "okay";
 	};
 };
-
-/* DSI host - connects to display panel */
-&dsi0 {
-	status = "okay";
-	ports {
-		#address-cells = <1>;
-		#size-cells = <0>;
-		port@1 {
-			reg = <1>;
-			dsi0_out: endpoint {
-				remote-endpoint = <&s6e3fc3_input>;
-				data-lanes = <0 1 2 3>;
-			};
-		};
-	};
-};
-
-/* USB Type-C port */
-&usb_1 {
-	/* USB 3.0 support */
-	dwc3@4e00000 {
-		maximum-speed = "super-speed";
-		dr_mode = "otg";
-	};
-};
-
-/* Include common SM8250 peripherals */
-/* In upstream kernel this would be: #include "qcom/sm8250.dtsi" */

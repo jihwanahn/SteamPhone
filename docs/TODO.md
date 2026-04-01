@@ -6,12 +6,15 @@
 
 ## Phase 1: Build System Validation
 
-- [ ] Test kernel build script
-- [ ] Test device tree compilation
-- [ ] Test rootfs creation
-- [ ] Test gamescope build
-- [ ] Test Box64/Box86 build
-- [ ] Create bootable image
+- [x] Validate build scripts syntax and structure (2026-03-31)
+- [x] Fix gaming.txt - remove non-existent steam package
+- [x] Add missing GPU config files (panfrost.conf, freedreno.conf)
+- [ ] Test kernel build script (requires Linux build host)
+- [ ] Test device tree compilation (requires Linux build host)
+- [ ] Test rootfs creation (requires Linux build host)
+- [ ] Test gamescope build (requires Linux build host)
+- [ ] Test Box64/Box86 build (requires Linux build host)
+- [ ] Create bootable image (requires Linux build host)
 
 ## Phase 2: Hardware Enablement
 

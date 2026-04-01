@@ -1,8 +1,9 @@
 # Gaming packages for SteamPhone (Arch Linux ARM)
 # Installed on top of base system for Steam gaming support
 
-# Steam Client
-steam
+# NOTE: Steam client is NOT installed via pacman.
+# Steam is installed via Box64 after first boot using install-steam script.
+# See build/steam/install/usr/local/bin/install-steam for details.
 
 # Gamepad/input support
 xboxdrv

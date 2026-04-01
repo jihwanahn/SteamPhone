@@ -158,7 +158,7 @@ main() {
     log_info "=== Building Steam translation layer ==="
 
     build_box64
-    build_box86
+    log_info "Box86 skipped (Steam is 64-bit only, Box64 is sufficient)"
     create_steam_installer
 
     log_info "=== Steam integration complete ==="
